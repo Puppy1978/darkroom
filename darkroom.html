@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#000000">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>DARK TECH ROOM</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+html, body { width:100%; height:100%; background:#000; overflow:hidden; }
+
+/* ── VIDEO YOUTUBE A SCHERMO INTERO ── */
+#yt-wrap {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: auto;
+  overflow: hidden;
+}
+
+/* Trucco per nascondere UI YouTube e far sembrare un video puro:
+   l'iframe è overscaled così i controlli escono fuori dallo schermo */
+#yt-wrap iframe {
+  position: absolute;
+  top: 50%; left: 50%;
+  /* Scala l'iframe più grande della viewport per tagliare i bordi YT */
+  width: calc(100vw + 120px);
+  height: calc(100vh + 120px);
+  transform: translate(-50%, -50%);
+  border: none;
+  pointer-events: auto;
+}
+
+/* ── SCANLINES OVERLAY ── */
+#scanlines {
+  position: fixed; inset: 0; z-index: 10; pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg, transparent, transparent 2px,
+    rgba(0,0,0,0.10) 2px, rgba(0,0,0,0.10) 4px
+  );
+}
+
+/* ── VIGNETTE ── */
+#vignette {
+  position: fixed; inset: 0; z-index: 11; pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.7) 100%);
+}
+
+/* ── STATUS BAR ── */
+#status {
+  position: fixed; bottom: 0; left: 0; right: 0; height: 22px;
+  background: rgba(0,8,2,0.85);
+  border-top: 1px solid rgba(0,255,65,0.2);
+  display: flex; align-items: center;
+  padding: 0 12px; gap: 14px;
+  z-index: 100;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px; color: rgba(0,255,65,0.7);
+  overflow: hidden;
+}
+.sdot {
+  width: 5px; height: 5px; border-radius: 50%;
+  animation: blink 2s ease-in-out infinite; flex-shrink: 0;
+}
+.sdot.g { background:#00ff41; box-shadow:0 0 4px #00ff41; }
+.sdot.a { background:#ffb000; box-shadow:0 0 4px #ffb000; animation-delay:.5s; }
+.sdot.c { background:#00eeff; box-shadow:0 0 4px #00eeff; animation-delay:1s; }
+.sdot.r { background:#ff2244; box-shadow:0 0 4px #ff2244; animation-delay:1.5s; }
+.si { display:flex; align-items:center; gap:4px; white-space:nowrap; }
+#clock { margin-left:auto; font-size:11px; color:#00ff41; letter-spacing:2px; flex-shrink:0; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.2} }
+
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+</style>
+</head>
+<body>
+
+<!-- VIDEO YOUTUBE EMBED -->
+<div id="yt-wrap">
+  <iframe
+    id="yt-player"
+    src="https://www.youtube.com/embed/WSXdH5SzNBs?autoplay=1&mute=1&loop=1&playlist=WSXdH5SzNBs&controls=0&showinfo=0&rel=0&modestbranding=1&iv_load_policy=3&disablekb=1&fs=1&start=0"
+    allow="autoplay; encrypted-media"
+    allowfullscreen>
+  </iframe>
+</div>
+
+<!-- EFFETTI VISIVI -->
+<div id="scanlines"></div>
+<div id="vignette"></div>
+
+<!-- STATUS BAR -->
+<div id="status">
+  <div class="si"><div class="sdot g"></div>SYS ONLINE</div>
+  <div class="si"><div class="sdot a"></div><span id="net">847 MB/s</span></div>
+  <div class="si"><div class="sdot c"></div>CPU <span id="cpu">94%</span></div>
+  <div class="si"><div class="sdot r"></div>FW:ACTIVE</div>
+  <div class="si"><div class="sdot g"></div>NODE:<span id="node">7F:A2:C9</span></div>
+  <div id="clock">00:00:00</div>
+</div>
+
+<script>
+const HEX = () => Math.floor(Math.random()*0xffff).toString(16).toUpperCase().padStart(4,'0');
+const RND = (a,b) => Math.floor(Math.random()*(b-a+1))+a;
+
+function tick() { document.getElementById('clock').textContent = new Date().toTimeString().slice(0,8); }
+setInterval(tick, 1000); tick();
+
+setInterval(() => {
+  document.getElementById('node').textContent = HEX().slice(0,2)+':'+HEX().slice(0,2)+':'+HEX().slice(0,2);
+  document.getElementById('cpu').textContent  = RND(80,99)+'%';
+  document.getElementById('net').textContent  = RND(400,999)+' MB/s';
+}, 2500);
+</script>
+</body>
+</html>
